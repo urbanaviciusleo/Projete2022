@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>FIREBASE</title>
+    </head>
+    <body>
+        <input type="text" id="name" placeholder="Name">
+        <input type="text" id="country" placeholder="Country">
+        <button id="button"> saveData</button>
+
+        <script type="module">
+                import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.8.4/firebase-app.js';
+                import { getDatabase, ref , set, get, child, onValue } from 'https://www.gstatic.com/firebasejs/9.8.4/firebase-database.js';
+
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBahmej0LiYLLM5OadBKeB_NKDGb7u2dFE",
+                    authDomain: "fir-js-c7e0e.firebaseapp.com",
+                    databaseURL: "https://fir-js-c7e0e-default-rtdb.firebaseio.com",
+                    projectId: "fir-js-c7e0e",
+                    storageBucket: "fir-js-c7e0e.appspot.com",
+                    messagingSenderId: "893278687955",
+                    appId: "1:893278687955:web:d40c449a16dcfc1055fa26"
+                  };
+
+                const app = initializeApp(firebaseConfig);
+                
+                function getUserAdressData(nome){
+                  const db = getDatabase();
+                  var Ref = ref(db, 'users/' + nome + '/País');
+                  onValue(Ref, (snapshot) => {
+                  const data = snapshot.val();
+                  console.log(data);
+                });
+                }
+
+                function getListofUsersUnderSameCEP(){
+                  const db = getDatabase();
+                  var Ref = ref(db, '/');
+                  onValue(Ref, (snapshot) => {
+                  const data = snapshot.val();
+                  console.log(data.users[1].Nome);
+                });
+                }
+
+                function writeUserData(nome, email, senha, cel, DataNasc, Sexo, País, CEP) {
+                    var numUser = 0;
+                    numUser++; 
+                    const db = getDatabase();
+                      set(ref(db, 'users/' + CEP + '/' + numUser), { // 'users/' + cep + '/' + nome 
+                        Nome: nome,
+                        Email: email,                 // criar mapa com base na cidade do usuário
+                        Senha: senha,                 // Para procurar outros cadastrados na mesma cidade
+                        Celular: cel,                 // verificar o cep do usuário cadastrado e puxar uma 
+                        DataNascimento: DataNasc,     // lista dos endereços de usuários cadastrados no mesmo cep
+                        Sexo: Sexo,                   //
+                        País: País,
+                        Cep: CEP,
+                      }); 
+                }
+                writeUserData("Amigo", "leonardourbanavicius@gmail.com", "151515","35992744250", "14/07/2005", "Masculino", "Brasil", "37540000");
+                //getUserAdressData("leoo");
+                getListofUsersUnderSameCEP();
+
+        </script>
+    </body>
+</html>
