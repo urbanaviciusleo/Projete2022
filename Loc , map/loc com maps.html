@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<body>
+    
+<p id="demo">Clique no botão para obter sua localização:</p>
+<button onclick="getLocation()">Clique aqui</button>
+<div id="mapholder"></div>
+<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script>
+var x=document.getElementById("demo");
+function getLocation()
+  {
+  if (navigator.geolocation)
+    {
+    navigator.geolocation.getCurrentPosition(showPosition,showError);
+    }
+  else{x.innerHTML="Geolocalização não é suportada nesse browser.";}
+  }
+ 
+function showPosition(position)
+  {
+  lat=position.coords.latitude;
+  lon=position.coords.longitude;
+  latlon=new google.maps.LatLng(lat, lon)
+  mapholder=document.getElementById('mapholder')
+  mapholder.style.height='250px';
+  mapholder.style.width='500px';
+ 
+  var myOptions={
+  center:latlon,zoom:14,
+  mapTypeId:google.maps.MapTypeId.ROADMAP,
+  mapTypeControl:false,
+  navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+  };
+  var map=new google.maps.Map(document.getElementById("mapholder"),myOptions);
+  var marker=new google.maps.Marker({position:latlon,map:map,title:"Você está Aqui!"});
+  }
+  /* Em resumo , ele vai verificar a geolocalizacao e suportada pelo brwser , caso isso seja verdadeiro o metodo getCurrentPosition() , caso 
+    contrario ira exibir uma mensagem de "erro de localizacao" para o usuario.
+    Depois disso , ele vai verificar e se o metodo getCurrentPosition() for executado com sucesso , ele vai retornar as coordenadas para a
+    funcao "show postion"
+    Essa funcao showPosition() vai exibir a latitude e a longitude para o usuario.
+
+    Erros:
+    Se a permissao for recusada , vai mostrar um aviso dizendo que o usuario negou a permissao do uso de geolocalizacao
+    Se nao foi possivel acessar a permicao , vai aparecer a mensagem de "nao foi possivel obter a localizacao" */
+function showError(error)
+  {
+  switch(error.code)
+    {
+    case error.PERMISSION_DENIED:
+      x.innerHTML="Usuário rejeitou a solicitação de Geolocalização."
+      break;
+    case error.POSITION_UNAVAILABLE:
+      x.innerHTML="Localização indisponível."
+      break;
+    case error.TIMEOUT:
+      x.innerHTML="O tempo da requisição expirou."
+      break;
+    case error.UNKNOWN_ERROR:
+      x.innerHTML="Algum erro desconhecido aconteceu."
+      break;
+    }
+  }
+</script>
+</body>
+</html>
+     
