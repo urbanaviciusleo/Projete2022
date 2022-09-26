@@ -7,12 +7,14 @@
         <input type="text" id="name" placeholder="Name">
         <input type="text" id="country" placeholder="Country">
         <button id="button"> saveData</button>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 
         <script type="module">
                 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.8.4/firebase-app.js';
                 import { getDatabase, ref , set, get, child, onValue } from 'https://www.gstatic.com/firebasejs/9.8.4/firebase-database.js';
 
-
+                //configuração firebase
                 const firebaseConfig = {
                     apiKey: "AIzaSyBahmej0LiYLLM5OadBKeB_NKDGb7u2dFE",
                     authDomain: "fir-js-c7e0e.firebaseapp.com",
@@ -25,43 +27,55 @@
 
                 const app = initializeApp(firebaseConfig);
                 
-                function getUserAdressData(nome){
-                  const db = getDatabase();
-                  var Ref = ref(db, 'users/' + nome + '/País');
-                  onValue(Ref, (snapshot) => {
-                  const data = snapshot.val();
-                  console.log(data);
-                });
-                }
+                //Cadastra Usuário
 
-                function getListofUsersUnderSameCEP(){
-                  const db = getDatabase();
-                  var Ref = ref(db, '/');
-                  onValue(Ref, (snapshot) => {
-                  const data = snapshot.val();
-                  console.log(data.users[1].Nome);
-                });
-                }
-
-                function writeUserData(nome, email, senha, cel, DataNasc, Sexo, País, CEP) {
-                    var numUser = 0;
-                    numUser++; 
+                function writeUserData(nome, endereco, cep, pais, telefone) {
+                    
+                    try {var adi=0; // começar em -1
+                    adi++;
+                    var numUser = numUser + adi; 
                     const db = getDatabase();
-                      set(ref(db, 'users/' + CEP + '/' + numUser), { // 'users/' + cep + '/' + nome 
+                      set(ref(db, 'users/' + endereco +' '+ pais), { 
                         Nome: nome,
-                        Email: email,                 // criar mapa com base na cidade do usuário
-                        Senha: senha,                 // Para procurar outros cadastrados na mesma cidade
-                        Celular: cel,                 // verificar o cep do usuário cadastrado e puxar uma 
-                        DataNascimento: DataNasc,     // lista dos endereços de usuários cadastrados no mesmo cep
-                        Sexo: Sexo,                   //
-                        País: País,
-                        Cep: CEP,
+                        endereco: endereco,
+                        cep: cep,
+                        pais: pais,
+                        telefone: telefone
                       }); 
+                    }
+                    catch(error){
+                      console.log("erro")
+                    }
                 }
-                writeUserData("Amigo", "leonardourbanavicius@gmail.com", "151515","35992744250", "14/07/2005", "Masculino", "Brasil", "37540000");
-                //getUserAdressData("leoo");
-                getListofUsersUnderSameCEP();
 
+                //Retorna endereços dos usuários
+                function getAdresses(){
+                  var adresses = [];
+                  const db = getDatabase();
+                  var Ref = ref(db, '/users');
+                  var data;
+                  onValue(Ref, (snapshot) => {
+                  data = snapshot.val();
+                  //console.log(data);
+                  //console.log(Object.values(data)[i].endereco); 
+                  for (var i = 0; i < Object.values(data).length; i++){
+                    console.log(Object.values(data)[i].endereco + " " + Object.values(data)[i].Nome);
+                    adresses[i] = Object.values(data)[i].endereco;
+                  }
+                  }); 
+                  return adresses;
+                }
+
+
+                console.log(getAdresses()[0]);
+
+
+                // for(var i = 0; i < getAdresses().length; i++){
+                //   console.log(getAdresses());
+                // }
+
+                //writeUserData("Joao", "Rua almeida moreira da costa 29", "37540000", "Brasil", "35992744250");
+                
         </script>
     </body>
 </html>
